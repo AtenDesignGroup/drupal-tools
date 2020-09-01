@@ -6,6 +6,10 @@ use Drupal\Core\Entity\EntityDefinitionUpdateManager;
 
 class Updater {
 
+  public static function batch(&$sandbox, $size = 10, $chunk = FALSE) {
+    return new UpdaterBatch($sandbox, $size, $chunk);
+  }
+
   public static function reinstallEntityType($entity_type_id) {
     $entity_type_manager = \Drupal::service('entity_type.manager');
     if (!$entity_type = $entity_type_manager->getDefinition($entity_type_id)) {
