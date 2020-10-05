@@ -67,4 +67,8 @@ class Updater {
     }
     $definition_update_manager->uninstallFieldStorageDefinition($field_definitions[$field_name]);
   }
+
+  public static function entities() {
+    return new UpdaterEntities();
+  }
 }
