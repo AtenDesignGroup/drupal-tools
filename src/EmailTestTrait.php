@@ -13,9 +13,9 @@ trait EmailTestTrait {
 
   protected $currentMailSenderOverride;
 
-  protected $testMailSender;
+  protected $testMailSender = 'test_mail_collector';
 
-  protected $testMailFormatter;
+  protected $testMailFormatter = 'test_mail_collector';
 
   /**
    * @see ExistingSiteBase::setUp()
