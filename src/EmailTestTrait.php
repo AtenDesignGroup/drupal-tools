@@ -13,12 +13,17 @@ trait EmailTestTrait {
 
   protected $currentMailSenderOverride;
 
+  protected $currentMailFormatterOverride;
+
   protected $testMailSender = 'test_mail_collector';
 
   protected $testMailFormatter = 'test_mail_collector';
 
   /**
    * @see ExistingSiteBase::setUp()
+   *
+   * TODO: if using ::drupalPostForm this override will not work if there is
+   * a local.settings.php file.
    */
   protected function setUpEmail() {
     // We should really check if the module exists.
@@ -32,6 +37,11 @@ trait EmailTestTrait {
       $this->currentMailSenderOverride = $GLOBALS['config']['mailsystem.settings']['defaults']['sender'];
       // This global is set and cannot be overridden with just the editable config.
       $GLOBALS['config']['mailsystem.settings']['defaults']['sender'] = $this->testMailSender ?? 'php_mail';
+    }
+    if (isset($GLOBALS['config']['mailsystem.settings']['defaults']['formatter'])) {
+      $this->currentMailFormatterOverride = $GLOBALS['config']['mailsystem.settings']['defaults']['formatter'];
+      // This global is set and cannot be overridden with just the editable config.
+      $GLOBALS['config']['mailsystem.settings']['defaults']['formatter'] = $this->testMailFormatter ?? 'php_mail';
     }
 
     $this->clearMails();
