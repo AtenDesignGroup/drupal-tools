@@ -4,6 +4,7 @@ namespace Aten\DrupalTools;
 
 use Drupal\Component\Serialization\Json;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityRepositoryInterface;
 use Drupal\Core\Extension\ModuleHandler;
 use Drupal\Core\File\FileSystem;
 use Drupal\Core\Serialization\Yaml;
@@ -40,7 +41,7 @@ abstract class ExistingSiteBase extends WeitzmanExistingSiteBase {
 
     static::assertThat($array, $constraint, $message);
   }
-  
+
   /**
    * Search current page for text by CSS selector provided.
    *
@@ -76,7 +77,7 @@ abstract class ExistingSiteBase extends WeitzmanExistingSiteBase {
 
     $this->assertContains($text, $elements);
   }
-  
+
   /**
    * Asserts that an array has a specified key.
    *
@@ -110,7 +111,14 @@ abstract class ExistingSiteBase extends WeitzmanExistingSiteBase {
     $entity_storage->resetCache([$entity->id()]);
     return $entity_storage->load($id);
   }
-  
+
+  protected function uuidToId($entity_type, $uuid) {
+    /** @var EntityRepositoryInterface $repository */
+    $repository = \Drupal::service('entity.repository');
+    $entity = $repository->loadEntityByUuid($entity_type, $uuid);
+    return $entity ? $entity->id() : FALSE;
+  }
+
   protected function getFixturesPath($module_name = 'jocrf_core') {
     /** @var ModuleHandler $module_handler */
     $module_handler = \Drupal::service('module_handler');
