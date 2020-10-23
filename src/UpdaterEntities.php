@@ -13,12 +13,10 @@ class UpdaterEntities {
   }
 
   public function ensure($entity_type_id, $uuid, array $data) {
-    if ($this->get($entity_type_id, $uuid)) {
-      return $this->get($entity_type_id, $uuid);
+    if ($entity = $this->get($entity_type_id, $uuid)) {
+      return $entity;
     }
-    $entity = \Drupal::service('entity.repository')->loadEntityByUuid($entity_type_id, $uuid);
-    if (!empty($entity)) {
-      $this->data[$entity_type_id][$uuid] = $entity;
+    if ($entity = $this->load($entity_type_id, $uuid)) {
       return $entity;
     }
     $data['uuid'] = $uuid;
@@ -28,8 +26,30 @@ class UpdaterEntities {
     return $entity;
   }
 
+  public function load($entity_type_id, $uuid) {
+    $entity = \Drupal::service('entity.repository')->loadEntityByUuid($entity_type_id, $uuid);
+    if (!empty($entity)) {
+      $this->data[$entity_type_id][$uuid] = $entity;
+      return $entity;
+    }
+    return FALSE;
+  }
+
   public function get($entity_type_id, $uuid) {
     return $this->data[$entity_type_id][$uuid] ?? NULL;
+  }
+
+  public function overwrite($entity_type_id, $uuid, array $data) {
+    if (!$entity = $this->load($entity_type_id, $uuid)) {
+      return;
+    }
+    foreach ($data as $key => $value) {
+      if (!$entity->hasField($key)) {
+        continue;
+      }
+      $entity->set($key, $value);
+    }
+    $entity->save();
   }
 
   public function getId($entity_type_id, $uuid) {
