@@ -30,12 +30,18 @@ class UpdaterBatch {
       $this->sandbox['records'] = $records;
     }
     $this->sandbox['max'] = count($this->sandbox['records']);
+    // Store the actual total if this is chunked for the summary.
+    $this->sandbox['total'] = count($records);
   }
 
   public function process($callable) {
     for ($x = 0; $x < $this->size; $x++) {
       $record = array_shift($this->sandbox['records']);
       $callable($record);
+      $this->sandbox['current'] = [
+        'record' => $record,
+        'progress' => $this->sandbox['progress'],
+      ];
       $this->sandbox['progress']++;
     }
 
@@ -43,8 +49,16 @@ class UpdaterBatch {
   }
 
   public function summary() {
+    $progress = $this->sandbox['progress'];
+    // Process range or count of the total amount of records.
+    if ($this->chunk !== FALSE) {
+      // Current progress was incremented so rewind to display.
+      $range_start = $this->sandbox['current']['progress'] * $this->chunk;
+      $range_end = $range_start + count($this->sandbox['current']['record']);
+      $progress = "{$range_start} - {$range_end}";
+    }
     return t('Processed @count out of @total total records.', [
-      '@count' => $this->sandbox['progress'],
+      '@count' => $progress,
       '@total' => $this->sandbox['total'],
     ]);
   }
