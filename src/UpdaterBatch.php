@@ -2,6 +2,42 @@
 
 namespace Aten\DrupalTools;
 
+/**
+ * Batch process for hook_post_update.
+ *
+ * Example:
+ * @code
+ * function my_module_post_update_populate_custom_field(&$sandbox) {
+ *   $user_storage = \Drupal::service('entity_type.manager')->getStorage('user');
+ *
+ *   $batch_update = Updater::batch($sandbox, 1, 20);
+ *   if (!$batch_update->inProgress()) {
+ *     // Run query for all data.
+ *     $results = $user_storage->getQuery()
+ *       ->condition('status', 1)
+ *       ->condition('roles', ['custom role', 'another custom role'], 'IN')
+ *       ->notExists('custom_field')
+ *       ->execute();
+ *
+ *     if (empty($results)) {
+ *       return t('No records found');
+ *     }
+ *
+ *     $batch_update->init($results);
+ *   }
+ *
+ *   $batch_update->process(function($user_ids) use ($user_storage) {
+ *     $users = $user_storage->loadMultiple($user_ids);
+ *     foreach ($users as $user) {
+ *       $user->set('custom_field', 'test value');
+ *       $user->save();
+ *     }
+ *   });
+ *
+ *   return $batch_update->summary();
+ * }
+ * @endcode
+ */
 class UpdaterBatch {
 
   protected $sandbox;
