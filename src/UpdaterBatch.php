@@ -71,7 +71,8 @@ class UpdaterBatch {
   }
 
   public function process($callable) {
-    for ($x = 0; $x < $this->size; $x++) {
+    $size = min($this->size, count($this->sandbox['records']));
+    for ($x = 0; $x < $size; $x++) {
       $record = array_shift($this->sandbox['records']);
       $callable($record);
       $this->sandbox['current'] = [
