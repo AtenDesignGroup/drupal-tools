@@ -2,11 +2,14 @@
 
 namespace Aten\DrupalTools;
 
+use Drupal\Core\DependencyInjection\DependencySerializationTrait;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 abstract class FormAlterBase {
+
+  use DependencySerializationTrait;
 
   use StringTranslationTrait;
 
