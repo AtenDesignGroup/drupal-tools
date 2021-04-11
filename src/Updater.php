@@ -48,7 +48,7 @@ class Updater {
       return;
     }
 
-    $field_definitions = \Drupal::service('entity_field.manager')->getFieldDefinitions($entity_type_id, $bundle);
+    $field_definitions = \Drupal::service('entity_field.manager')->getFieldStorageDefinitions($entity_type_id, $bundle);
     if (empty($field_definitions[$field_name])) {
       throw new \Exception("$entity_type_id field \"$field_name\" is not defined");
     }
@@ -61,7 +61,7 @@ class Updater {
       return;
     }
 
-    $field_definitions = \Drupal::service('entity_field.manager')->getFieldDefinitions($entity_type_id, $bundle);
+    $field_definitions = \Drupal::service('entity_field.manager')->getFieldStorageDefinitions($entity_type_id, $bundle);
     if (empty($field_definitions[$field_name])) {
       throw new \Exception("$entity_type_id field \"$field_name\" is not defined");
     }

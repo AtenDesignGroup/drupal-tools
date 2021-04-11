@@ -6,10 +6,12 @@ class UpdaterEntities {
 
   protected $data = [];
 
-  public function ensureMultiple($entity_type_id, array $entities) {
-    foreach ($entities as $uuid => $data) {
-      $this->ensure($entity_type_id, $uuid, $data);
+  public function ensureMultiple($entity_type_id, array $entity_data) {
+    $entities = [];
+    foreach ($entity_data as $uuid => $data) {
+      $entities[$uuid] = $this->ensure($entity_type_id, $uuid, $data);
     }
+    return $entities;
   }
 
   public function ensure($entity_type_id, $uuid, array $data) {
